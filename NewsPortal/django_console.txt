@@ -1,0 +1,96 @@
+# получаемые результаты будут отличаться за счет рандомизации, используемой в контексте отдельных операций
+# отдельные операции отбиты пустыми строками (вставляются в django-консоль целиком)
+
+# для удобства работы с django shell установил заранее 2 пакета django-extensions и ipython (см. requirements.txt)
+# в интересах отладки использовал возможности автоматической перезагрузки ранее импортированных модулей
+%load_ext autoreload
+%autoreload 2
+
+# импорты
+import random
+
+from django.contrib.auth.models import User
+
+from news.models import Author, Category, Post, PostCategory, Comment
+
+# создаем двух пользователей
+[User.objects.create_user(username) for username in ['RomanGoodGuy', 'RomanBadGuy']]
+
+# каждый из созданных пользователей становится автором
+[Author.objects.create(user=User.objects.filter(username=username)[0]) for username in ['RomanGoodGuy', 'RomanBadGuy']]
+
+# создаем категории
+[Category.objects.create(title=title) for title in ['Категория 1', 'Категория 2', 'Категория 3', 'Категория 4']]
+
+#создаем новость и 2 статьи с привязкой к случайному автору
+[
+    Post.objects.create(
+        author=Author.objects.all()[random.randint(0, len(Author.objects.all()) - 1)],
+        kind=Post.PostKind.NEW if post_index == 0 else Post.PostKind.ART,
+        title=f'Заголовок {'новости' if post_index == 0 else 'статьи'} №{post_index + 1}',
+        content=f'Текстовое содержимое {'новости' if post_index == 0 else 'статьи'} №{post_index + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque semper nibh nibh, non hendrerit sem efficitur et. Phasellus dapibus vestibulum orci, pulvinar tempus sapien suscipit vel. Duis varius odio vel pellentesque elementum. Curabitur a tortor blandit, cursus urna in, dictum libero. Etiam aliquet varius lacus, congue ornare ipsum condimentum id. Proin a posuere odio. Aenean tempor egestas vehicula. Duis quis auctor diam, ac molestie tortor. Praesent rutrum eros lorem, quis fermentum velit gravida sit amet. ',
+    )
+    for post_index in range(0, 3)
+]
+
+# оцениваем посты случайным числом голосов в заданном интервале (исходим из того, что число голосов не может превышать число пользователей)
+[
+    [
+        post.dislike() if random.randint(0, 1) == 0 else post.like() for _ in range(0, random.randint(0, len(User.objects.all())))
+    ]
+    for post in Post.objects.all()
+]
+
+# связываем новости/статьи со случайным набором категорий (минимальное число категорий = 2, максимальное = 4)
+[
+    [
+        PostCategory.objects.create(post=post, category=category) for category in random.sample(list(Category.objects.all()), random.randint(2,4))
+    ]
+    for post in Post.objects.all()
+]
+
+# создаем комментарии к новостям
+[
+    [
+        Comment.objects.create(
+            post = post,
+            user = User.objects.all()[random.randint(0, len(User.objects.all()) - 1)],
+            content = f'Комментарий №{int(_) - 1} к новости {post.title}',
+        ) for _ in range(2, 5)
+    ]
+    for post in Post.objects.all()
+]
+
+# оцениваем комментарии случайным числом голосов в заданном интервале (исходим из того, что число голосов не может превышать число пользователей)
+[
+    [
+        comment.dislike() if random.randint(0, 1) == 0 else comment.like() for _ in range(0, random.randint(0, len(User.objects.all())))
+    ]
+    for comment in Comment.objects.all()
+]
+
+# обновляем рейтинги авторов
+[author.update_rating() for author in Author.objects.all()]
+
+#Вывести username и рейтинг лучшего пользователя (применяя DESC-сортировку и возвращая поля первого объекта).
+best_author = Author.objects.all().order_by('-rating')[0]
+print(f'Best author {best_author.user.username} has total rating {best_author.rating}')
+
+#Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+best_article = Post.objects.all().order_by('-rating')[0]
+print(f'====Информация о лучшей статье====\n\
+    Автор: {best_article.author.user.username},\n\
+    Рейтинг: {best_article.rating},\n\
+    Заголовок: {best_article.title},\n\
+    Превью: {best_article.preview()}'
+)
+
+#Вывести все комментарии (дата, пользователь, рейтинг, текст) к лушей статье.
+[
+    print(f'Дата комментария: {comment.created_dt}, \n\
+        Автор комментария: {comment.user.username},\n\
+        Рейтинг: {comment.rating},\n\
+        Текст: {comment.content}'
+    )
+    for comment in Comment.objects.filter(post = Post.objects.all().order_by('-rating')[0])
+]
