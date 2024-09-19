@@ -82,7 +82,7 @@ print(f'====Информация о лучшей статье====\n\
     Автор: {best_article.author.user.username},\n\
     Рейтинг: {best_article.rating},\n\
     Заголовок: {best_article.title},\n\
-    Превью: {best_article.preview()}'
+    Превью: {best_article.preview}'
 )
 
 #Вывести все комментарии (дата, пользователь, рейтинг, текст) к лушей статье.

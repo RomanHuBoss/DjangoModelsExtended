@@ -3,12 +3,38 @@
 
 <!-- Название у нас будет Список новостей -->
 {% block title %}
-Список новостей
+Публикации
 {% endblock title %}
 
 <!-- В контенте на странице мы выводим все новости -->
 {% block content %}
-<h1>Все новости</h1>
-{{ posts_list }}
-<br/>
+<h1>Все публикации</h1>
+{% if posts_list %}
+       <table>
+           <thead>
+           <tr>
+               <th>Автор</th>
+               <th>Тип материала</th>
+               <th>Заголовок</th>
+               <th>Краткое содержание</th>
+               <th>Категории</th>
+               <th>Рейтинг</th>
+           </tr>
+           </thead>
+           <tbody>
+           {% for post in posts_list %}
+           <tr>
+               <td>{{post.author.user.username}}</td>
+               <td>{{post.kind_readable}}</td>
+               <td>{{post.title}}</td>
+               <td>{{post.preview}}</td>
+               <td>{{post.categories_readable}}</td>
+               <td>{{post.rating}}</td>
+           </tr>
+           {% endfor %}
+           </tbody>
+       </table>
+{% else %}
+<h2>Публикаций нет</h2>
+{% endif %}
 {% endblock content %}

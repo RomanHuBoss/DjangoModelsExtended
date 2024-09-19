@@ -65,6 +65,11 @@ class Post(models.Model):
         self.rating -= 1
         self.save()
 
+    @property
+    def kind_readable(self):
+        return Post.PostKind[self.kind].label
+
+    @property
     def preview(self):
         """
         возвращает начало статьи (предварительный просмотр)
@@ -72,6 +77,10 @@ class Post(models.Model):
         :return: str
         """
         return f'{self.content[:124]}...'
+
+    @property
+    def categories_readable(self):
+        return ", ".join([_.category.title for _ in PostCategory.objects.filter(post = self)])
 
 
 class PostCategory(models.Model):
