@@ -8,28 +8,22 @@
 
 <!-- В контенте на странице мы выводим все новости -->
 {% block content %}
-<h1>Все публикации</h1>
+<h1>Все публикации ({{ posts_list|length }})</h1>
 {% if posts_list %}
        <table>
            <thead>
            <tr>
-               <th>Автор</th>
-               <th>Тип материала</th>
                <th>Заголовок</th>
-               <th>Краткое содержание</th>
-               <th>Категории</th>
-               <th>Рейтинг</th>
+               <th>Дата публикации</th>
+               <th>Содержание</th>
            </tr>
            </thead>
            <tbody>
            {% for post in posts_list %}
            <tr>
-               <td>{{post.author.user.username}}</td>
-               <td>{{post.kind_readable}}</td>
                <td>{{post.title}}</td>
-               <td>{{post.preview}}</td>
-               <td>{{post.categories_readable}}</td>
-               <td>{{post.rating}}</td>
+               <td>{{post.created_dt|date:'d.m.Y'}}</td>
+               <td><a href="/posts/{{post.id}}/">{{post.content|truncatewords:20}}</a></td>
            </tr>
            {% endfor %}
            </tbody>
