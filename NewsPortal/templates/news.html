@@ -5,10 +5,13 @@
 {% block title %}
 Публикации
 {% endblock title %}
+{% load custom_tags %}
+{% load custom_filters %}
 
 <!-- В контенте на странице мы выводим все новости -->
 {% block content %}
 <h1>Все публикации ({{ posts_list|length }})</h1>
+на {% current_time '%d.%m.%Y' %}
 {% if posts_list %}
        <table>
            <thead>
@@ -16,14 +19,16 @@
                <th>Заголовок</th>
                <th>Дата публикации</th>
                <th>Содержание</th>
+               <th>Рейтинг</th>
            </tr>
            </thead>
            <tbody>
            {% for post in posts_list %}
            <tr>
-               <td>{{post.title}}</td>
+               <td>{{post.title|censor}}</td>
                <td>{{post.created_dt|date:'d.m.Y'}}</td>
-               <td><a href="/posts/{{post.id}}/">{{post.content|truncatewords:20}}</a></td>
+               <td><a href="/news/{{post.id}}/">{{post.content|censor|truncatechars:20}}</a></td>
+               <td>{{post.rating}}</td>
            </tr>
            {% endfor %}
            </tbody>

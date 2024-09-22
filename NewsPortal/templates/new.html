@@ -1,6 +1,9 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 
+{% load custom_tags %}
+{% load custom_filters %}
+
 <!-- Название у нас будет Сообщение -->
 {% block title %}
 Публикация
@@ -8,11 +11,11 @@
 
 <!-- В контенте на странице мы выводим сам пост, идентификатор которого был передан в url -->
 {% block content %}
-<h1>{{ post.title }}</h1>
+<h1>{{ post.title|censor }}</h1>
 <h3>Дата публикации: {{ post.created_dt|date:'d.m.Y' }}</h3>
 <div>
-    {{ post.content }}
+    {{ post.content|censor }}
 </div>
-<a href="/posts/">К списку публикаций</a>
+<a href="/news/">К списку публикаций</a>
 {% endblock content %}
 
