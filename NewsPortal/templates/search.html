@@ -1,20 +1,24 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 
-<!-- Название у нас будет Список новостей -->
 {% block title %}
-Публикации
+Поиск публикаций
 {% endblock title %}
 {% load custom_tags %}
 {% load custom_filters %}
 
 
-<!-- В контенте на странице мы выводим все новости -->
+<!-- В контенте на странице мы выводим найденные публикации -->
 {% block content %}
-<h1>Все публикации ({{ posts_list|length }})</h1>
+<h1>Найденные публикации ({{ posts_list|length }})</h1>
 на {% current_time '%d.%m.%Y' %}
 
-{% if posts_list %}
+<form action="" method="get">
+   {{ filterset.form.as_p }}
+   <input type="submit" value="Найти" />
+</form>
+
+{% if filterset.qs and posts_list %}
        <table>
            <thead>
            <tr>

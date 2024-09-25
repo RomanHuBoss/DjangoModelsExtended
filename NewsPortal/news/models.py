@@ -6,8 +6,12 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 
 class Author(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rating = models.IntegerField(default=0)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("Автор"))
+    rating = models.IntegerField(default=0, verbose_name=_("Рейтинг"))
+
+    class Meta:
+        verbose_name_plural = "Авторы"
+        verbose_name = "Автор"
 
     def update_rating(self):
         """
@@ -33,21 +37,39 @@ class Author(models.Model):
         self.rating = posts_rating + own_comments_rating + posts_comments_rating
         self.save()
 
+    def __str__(self):
+        return f"{self.user.username}"
+
 
 class Category(models.Model):
-    title = models.CharField(max_length = 255, unique=True)
+    title = models.CharField(max_length = 255, unique=True, verbose_name=_("Название"))
+
+    class Meta:
+        verbose_name_plural = "Категории"
+        verbose_name = "Категория"
+
+
+    def __str__(self):
+        return f"{self.title}"
+
 
 class Post(models.Model):
     class PostKind(models.TextChoices):
         NEW = "NEW", _("Новость")
         ART = "ART", _("Статья")
 
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    kind = models.CharField(max_length=3, choices=PostKind, default=PostKind.NEW)
-    created_dt = models.DateTimeField(default=now, editable=False)
-    title = models.CharField(max_length = 255, unique=True)
-    content = models.TextField()
-    rating = models.IntegerField(default=0)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name=_("Автор"))
+    kind = models.CharField(max_length=3, choices=PostKind, default=PostKind.NEW, verbose_name=_("Тип"))
+    created_dt = models.DateTimeField(default=now, editable=False, verbose_name=_("Дата/время создания"))
+    title = models.CharField(max_length = 255, unique=True, verbose_name=_("Заголово"))
+    content = models.TextField(verbose_name=_("Содержание"))
+    rating = models.IntegerField(default=0, verbose_name=_("Рейтинг"))
+    categories = models.ManyToManyField(Category, verbose_name=_("Категории"))
+
+    class Meta:
+        verbose_name_plural = "Публикации"
+        verbose_name = "Публикация"
+
 
     def like(self):
         """
@@ -78,22 +100,19 @@ class Post(models.Model):
         """
         return f'{self.content[:124]}...'
 
-    @property
-    def categories_readable(self):
-        return ", ".join([_.category.title for _ in PostCategory.objects.filter(post = self)])
-
-
-class PostCategory(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
+    def __str__(self):
+        return f"{self.title}"
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_dt = models.DateTimeField(default=now, editable=False)
-    rating = models.IntegerField(default=0)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name=_("Публикация"))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("Пользователь"))
+    content = models.TextField(verbose_name=_("Содержание"))
+    created_dt = models.DateTimeField(default=now, editable=False, verbose_name=_("Дата/время создания"))
+    rating = models.IntegerField(default=0, verbose_name=_("Рейтинг"))
+
+    class Meta:
+        verbose_name_plural = "Комментарии"
+        verbose_name = "Комментарий"
 
     def like(self):
         """
@@ -110,3 +129,7 @@ class Comment(models.Model):
         """
         self.rating -= 1
         self.save()
+
+    def __str__(self):
+        return f"{self.content[:100]}"
+
