@@ -23,7 +23,7 @@
     {% if posts_list %}
        <h2>Найденные публикации ({{ posts_list|length }})</h2>
        на {% current_time '%d.%m.%Y' %}
-       <table>
+       <table width="100%" border="1">
            <thead>
            <tr>
                <th>Заголовок</th>
@@ -43,7 +43,7 @@
            {% endfor %}
            </tbody>
        </table>
-
+        Страницы:
         {% if page_obj.has_previous %}
            <a href="?{% url_replace page=1 %}">1</a>
            {% if page_obj.previous_page_number != 1 %}
@@ -67,6 +67,9 @@
     {% endif %}
 {% endif %}
 
+<hr>
+
+[<a href="{% url 'new_create' %}">Добавить новость</a>] | [<a href="{% url 'article_create' %}">Добавить статью</a>]
 
 
 

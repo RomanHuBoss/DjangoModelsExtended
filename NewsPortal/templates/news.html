@@ -13,9 +13,9 @@
 {% block content %}
 <h1>Все публикации ({{ posts_list|length }})</h1>
 на {% current_time '%d.%m.%Y' %}
-
+<hr>
 {% if posts_list %}
-       <table>
+       <table border="1" width="100%">
            <thead>
            <tr>
                <th>Заголовок</th>
@@ -37,13 +37,8 @@
            {% endfor %}
            </tbody>
        </table>
-{% else %}
-<h2>Публикаций нет</h2>
-{% endif %}
-
-{# Добавляем пагинацию на страницу #}
-
-{# Информация о предыдущих страницах #}
+<hr>
+Страницы:
 {% if page_obj.has_previous %}
    <a href="?{% url_replace page=1 %}">1</a>
    {% if page_obj.previous_page_number != 1 %}
@@ -52,10 +47,8 @@
    {% endif %}
 {% endif %}
 
-{# Информация о текущей странице #}
 {{ page_obj.number }}
 
-{# Информация о следующих страницах #}
 {% if page_obj.has_next %}
    <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
    {% if paginator.num_pages != page_obj.next_page_number %}
@@ -64,6 +57,14 @@
    {% endif %}
 {% endif %}
 
+
+{% else %}
+<h2>Публикаций нет</h2>
+{% endif %}
+
+<hr>
+
+[<a href="{% url 'new_create' %}">Добавить новость</a>] | [<a href="{% url 'article_create' %}">Добавить статью</a>]
 
 
 {% endblock content %}

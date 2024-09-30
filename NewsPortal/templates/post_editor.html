@@ -1,0 +1,35 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Добавление/Изменение
+    {% if post_kind == 'new' %}
+        новости
+    {% elif post_kind == 'article' %}
+        статьи
+    {% endif %}
+{% endblock title %}
+{% load custom_tags %}
+{% load custom_filters %}
+
+<!-- В контенте на странице мы выводим найденные публикации -->
+{% block content %}
+
+<h1>Форма добавления/изменения
+    {% if post_kind == 'new' %}
+        новости
+    {% elif post_kind == 'article' %}
+        статьи
+    {% endif %}
+</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {% for error in form.non_field_errors %}
+        {{ error }}
+    {% endfor %}
+    {{ form.as_p }}
+    <input type="submit" value="Сохранить">
+</form>
+
+{% endblock content %}

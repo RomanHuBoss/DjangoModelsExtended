@@ -1,14 +1,40 @@
-from datetime import datetime
-from django.urls import reverse_lazy
+from django.views.decorators.http import require_http_methods
+from django.urls import reverse_lazy, resolve
 from django.views.generic import ListView, DetailView, FormView, DeleteView
 from .models import Post
 from .filters import PostFilter
+from .forms import PostAddEditForm
 
 class PostCreate(FormView):
-    pass
+    template_name = "post_editor.html"
+    form_class = PostAddEditForm
+    success_url = "/news/"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        url_name = resolve(self.request.path).url_name
+
+        if url_name == 'new_create' or url_name == 'new_edit':
+            context['post_kind'] = 'new'
+        elif url_name == 'article_create' or url_name == 'article_edit':
+            context['post_kind'] = 'article'
+        else:
+            raise ValueError()
+
+        return context
+
+    def form_valid(self, form):
+        #form.send_email()
+        return super().form_valid(form)
 
 class PostEdit(FormView):
-    pass
+    template_name = "post_editor.html"
+    form_class = PostAddEditForm
+    success_url = "/news/"
+
+    def form_valid(self, form):
+        #form.send_email()
+        return super().form_valid(form)
 
 class PostDelete(DeleteView):
     model = Post
