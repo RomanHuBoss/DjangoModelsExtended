@@ -92,6 +92,10 @@ class Post(models.Model):
         return Post.PostKind[self.kind].label
 
     @property
+    def kind_eng_readable(self):
+        return 'articles' if self.kind == 'ART' else 'news'
+
+    @property
     def preview(self):
         """
         возвращает начало статьи (предварительный просмотр)

@@ -29,7 +29,9 @@
            <tr>
                <td>{{post.title|censor}}</td>
                <td>{{post.created_dt|date:'d.m.Y'}}</td>
-               <td><a href="/news/{{post.id}}/">{{post.content|censor|truncatechars:20}}</a></td>
+               <td>
+                   <a href="/news/{{post.id}}/">{{post.content|censor|truncatechars:20}}</a> [<a href="/{{post.kind_eng_readable}}/{{post.id}}/delete">Удалить</a>]
+               </td>
                <td>{{post.rating}}</td>
            </tr>
            {% endfor %}
