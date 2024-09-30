@@ -61,7 +61,7 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name=_("Автор"))
     kind = models.CharField(max_length=3, choices=PostKind, default=PostKind.NEW, verbose_name=_("Тип"))
     created_dt = models.DateTimeField(default=now, editable=False, verbose_name=_("Дата/время создания"))
-    title = models.CharField(max_length = 255, unique=True, verbose_name=_("Заголово"))
+    title = models.CharField(max_length = 255, unique=True, verbose_name=_("Заголовок"))
     content = models.TextField(verbose_name=_("Содержание"))
     rating = models.IntegerField(default=0, verbose_name=_("Рейтинг"))
     categories = models.ManyToManyField(Category, verbose_name=_("Категории"))

@@ -11,16 +11,6 @@ class PostsList(ListView):
     context_object_name = 'posts_list'
     paginate_by = 10
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        self.filterset = PostFilter(self.request.GET, queryset)
-        return self.filterset.qs
-
-    def get_context_data(self, **kwargs):
-       context = super().get_context_data(**kwargs)
-       context['filterset'] = self.filterset
-       return context
-
 class PostDetail(DetailView):
     # Модель всё та же, но мы хотим получать информацию по отдельному товару
     model = Post
@@ -44,4 +34,5 @@ class PostsSearch(ListView):
     def get_context_data(self, **kwargs):
        context = super().get_context_data(**kwargs)
        context['filterset'] = self.filterset
+       context['active_filters_quantity'] = list(filter(lambda param: len(self.request.GET[param]) != 0, self.request.GET))
        return context
