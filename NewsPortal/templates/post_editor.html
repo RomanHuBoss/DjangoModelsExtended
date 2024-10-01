@@ -3,9 +3,9 @@
 
 {% block title %}
 Добавление/Изменение
-    {% if post_kind == 'new' %}
+    {% if publication_type == 'news' %}
         новости
-    {% elif post_kind == 'article' %}
+    {% elif publication_type == 'articles' %}
         статьи
     {% endif %}
 {% endblock title %}
@@ -16,9 +16,9 @@
 {% block content %}
 
 <h1>Форма добавления/изменения
-    {% if post_kind == 'new' %}
+    {% if publication_type == 'news' %}
         новости
-    {% elif post_kind == 'article' %}
+    {% elif publication_type == 'articles' %}
         статьи
     {% endif %}
 </h1>
