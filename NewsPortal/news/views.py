@@ -6,8 +6,10 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Post
 from .filters import PostFilter
 from .forms import PostAddEditForm
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
-class PostEdit(LoginRequiredMixin, UpdateView):
+class PostEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     raise_exception = True
     model = Post
     template_name = "post_editor.html"
@@ -30,7 +32,8 @@ class PostEdit(LoginRequiredMixin, UpdateView):
         form.save()
         return super().form_valid(form)
 
-class PostCreate(LoginRequiredMixin, CreateView):
+class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     raise_exception = True
     model = Post
     template_name = "post_editor.html"
@@ -62,7 +65,8 @@ class PostCreate(LoginRequiredMixin, CreateView):
         form_data.save()
         return super().form_valid(form)
 
-class PostDelete(LoginRequiredMixin, DeleteView):
+class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     raise_exception = True
     model = Post
     success_url = reverse_lazy('post_list')

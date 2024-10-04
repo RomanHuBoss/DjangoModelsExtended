@@ -30,6 +30,9 @@
                <th>Дата публикации</th>
                <th>Содержание</th>
                <th>Рейтинг</th>
+               {% if perms.news.change_post or perms.news.delete_post %}
+               <th>Действия</th>
+               {% endif %}
            </tr>
            </thead>
            <tbody>
@@ -39,10 +42,19 @@
                <td>{{post.created_dt|date:'d.m.Y'}}</td>
                <td>
                    <a href="/news/{{post.id}}/">{{post.content|censor|truncatechars:20}}</a>
-                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/edit">Изменить</a>]
-                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/delete">Удалить</a>]
                </td>
                <td>{{post.rating}}</td>
+               {% if perms.news.change_post or perms.news.delete_post %}
+               <td>
+                   {% if perms.news.change_post %}
+                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/edit">Изменить</a>]
+                   {% endif %}
+
+                   {% if perms.news.delete_post %}
+                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/delete">Удалить</a>]
+                   {% endif %}
+               </td>
+               {% endif %}
            </tr>
            {% endfor %}
            </tbody>
@@ -73,7 +85,11 @@
 
 <hr>
 
+{% if perms.news.add_post %}
+<hr>
 [<a href="/news{% url 'post_create' %}">Добавить новость</a>] | [<a href="/articles{% url 'post_create' %}">Добавить статью</a>]
+{% endif %}
+
 
 
 
