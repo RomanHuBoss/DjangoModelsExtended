@@ -1,4 +1,5 @@
 from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse_lazy, resolve
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -6,7 +7,8 @@ from .models import Post
 from .filters import PostFilter
 from .forms import PostAddEditForm
 
-class PostEdit(UpdateView):
+class PostEdit(LoginRequiredMixin, UpdateView):
+    raise_exception = True
     model = Post
     template_name = "post_editor.html"
     form_class = PostAddEditForm
@@ -28,7 +30,8 @@ class PostEdit(UpdateView):
         form.save()
         return super().form_valid(form)
 
-class PostCreate(CreateView):
+class PostCreate(LoginRequiredMixin, CreateView):
+    raise_exception = True
     model = Post
     template_name = "post_editor.html"
     form_class = PostAddEditForm
@@ -59,12 +62,13 @@ class PostCreate(CreateView):
         form_data.save()
         return super().form_valid(form)
 
-class PostDelete(DeleteView):
-     model = Post
-     success_url = reverse_lazy('post_list')
+class PostDelete(LoginRequiredMixin, DeleteView):
+    raise_exception = True
+    model = Post
+    success_url = reverse_lazy('post_list')
 
-     def get(self, request, *args, **kwargs):
-         return self.delete(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
 
 class PostsList(ListView):
     model = Post

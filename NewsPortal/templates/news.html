@@ -22,6 +22,7 @@
                <th>Дата публикации</th>
                <th>Содержание</th>
                <th>Рейтинг</th>
+               <th>Действия</th>
            </tr>
            </thead>
            <tbody>
@@ -31,12 +32,12 @@
                <td>{{post.created_dt|date:'d.m.Y'}}</td>
                <td>
                    <a href="/news/{{post.id}}/">{{post.content|censor|truncatechars:20}}</a>
-
-                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/edit">Изменить</a>]
-
-                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/delete">Удалить</a>]
                </td>
                <td>{{post.rating}}</td>
+               <td>
+                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/edit">Изменить</a>]
+                   [<a href="/{{post.kind_eng_readable}}/{{post.id}}/delete">Удалить</a>]
+               </td>
            </tr>
            {% endfor %}
            </tbody>
